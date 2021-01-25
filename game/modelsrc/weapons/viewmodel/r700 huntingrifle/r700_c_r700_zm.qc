@@ -1,32 +1,32 @@
 // Created by Crowbar 0.44.0.0
 
-$modelname "weapons/c_shotgun_new.mdl"
+// numbers after activities indicate weights
+// -1 saves performance on single selections
+// 2 + 2 + 1 = 2/5th of the time 2/5th of the time 1/5th of the time
+
+//$modelname "weapons/c_rifle_zm.mdl"
+$modelname "weapons/c_r700_zm.mdl"
 
 $bodygroup "stoodio"
 {
-	studio "932_s3.smd"
+	studio "g452.smd"
 }
-
 
 $surfaceprop "default"
 
-$contents "solid"
-
-$maxeyedeflection 90
-
-$cdmaterials "models\weapons\new_shotgun2\"
-//$cdmaterials "models\weapons\haato\"
-$cdmaterials "models\weapons\sporting\"
-
-// model uses wood.vmt details.vmt gun.vmt
-
-// model also uses shotshell.vmt
-
-$attachment "muzzle" "d_gun" 33.00 -0.00 1.00 rotate 0 0 0
-$attachment "1" "d_gun" 7.00 -0.50 0.70 rotate 0 -90 0
+$cdmaterials "models\weapons\r700\"
+// r700stock r700gun r700scope boolet3006.vmt
 
 
+$attachment "muzzle" "d_gun" 0 -38.90 1.80 rotate 0 -90 0
+$attachment "1" "d_gun" -20.00 -5.00 -3.50 rotate 90 0 0
+// boolets come out of +x dir
 
+
+//$attachment "ironsight" "Dummy001" 8.537 -4.927 -2.181 rotate 0 0 0
+// -y x z
+
+// $origin 0 2 0
 
 $definebone "ValveBiped.Bip01_Spine4" "" 0.000006 0 0 -79.749938 -89.999873 -90.000099 0 0 0 0 0 0
 $definebone "ValveBiped.Bip01_L_Clavicle" "ValveBiped.Bip01_Spine4" 2.033349 1.000767 1.93766 -73.71188 168.619245 91.480563 0 0 0 0 0 0
@@ -114,115 +114,107 @@ $bonemerge "ValveBiped.Bip01_R_Finger02"
 
 
 
+
+
+
+/*
+
 $poseparameter "move_x" -1 1 loop 0
 
-$animation "walk_ws" "s3_9p_walking.smd" {
+
+$animation "walk_ws" "________.smd" {
 	fps 74.3
 	loop
 }
 
-$animation "idle_delta" "idle.smd" {
+$animation "idle_delta" "g452_idle.smd" {
 	fps 60
 }
 
+*/
+
 $sequence "idle" {
-	idle.smd
-	idle_delta
-	walk_ws
+	"g452_idle.smd"
+	// idle_delta
+	// walk_ws
 	activity "ACT_VM_IDLE" -1
-	blend "move_x" -1 1
-	blendwidth 3
+	fps 60 // 75 was for the walkcycle to match footstep sound cycle
+	snap
 	loop
 }
 
 
 $sequence "fire" {
-	"shoot_changed.smd"
+	"g452_fire.smd"
 	activity "ACT_VM_PRIMARYATTACK" -1
-	{ event AE_MUZZLEFLASH 0 "SHOTGUN muzzle" }
-	fadein 0
-	fadeout 0.1
-	snap
-	node "2"
-	fps 55
-}
-
-$sequence "draw" {
-	"draw.smd"
-	activity "ACT_VM_DRAW" -1
-	fadein 0
-	fadeout 0.1
-	node "0"
+	{ event AE_MUZZLEFLASH 1 "357 MUZZLE" }
 	snap
 	fps 60
 }
 
-$sequence "reload1" {
-	"r1_v2.smd"
-	activity "ACT_SHOTGUN_RELOAD_START" -1
-	fadein 0.05
+$sequence "draw" {
+	"g452_draw.smd"
+	activity "ACT_VM_DRAW" -1
+	snap
+	fps 60
+}
+
+$sequence "holster" {
+	"g452_idle.smd"
+	activity "ACT_VM_HOLSTER" -1
+	snap
+	fps 9999
+}
+
+$sequence "reload_start" {
+	"g452_r1.smd"
+	activity "ACT_VM_RELOAD_START" -1
+	fadein 0.1
+	fadeout 0.1
+	fps 60
+}
+
+
+$sequence "reload_cycle" {
+	"g452_r2_magfix.smd"
+	activity "ACT_VM_RELOAD" -1
+	{ event AE_CL_PLAYSOUND 45 "Weapon_Rifle_ZM.Reload" }
+	{ event AE_WPN_INCREMENTAMMO 45 ""}
+	fadein 0.2
+	fadeout 0.2
+	fps 60
+}
+
+$sequence "reload_end" {
+	"g452_r3.smd"
+	activity "ACT_VM_RELOAD_FINISH" -1
+	fadein 0.1
 	fadeout 0
-	node "0"
-	fps 90
+	fps 60
 }
 
-$sequence "reload2" {
-	"r2_v2.smd"
-	activity "ACT_VM_RELOAD" 1
-	{ event AE_WPN_INCREMENTAMMO 23 "" }
-	// { event AE_WPN_INCREMENTAMMO 21 "" }
-	fadein 0.05
-	fadeout 0.05
-	node "0"
-	fps 120
-}
-
-$sequence "reload22" {
-	"r22_v2.smd"
-	activity "ACT_VM_RELOAD" 1
-	{ event AE_WPN_INCREMENTAMMO 23 "" }
-	// { event AE_WPN_INCREMENTAMMO 21 "" }
-	fadein 0.05
-	fadeout 0.05
-	node "0"
-	fps 120
-}
-
-$sequence "reload3" {
-	"r3_v2.smd"
-	activity "ACT_SHOTGUN_RELOAD_FINISH" -1
-	fadein 0.05
-	fadeout 0.05
-	node "0"
-	fps 70
-}
-
-$sequence "pump" {
-	"pump_changed.smd"
+$sequence "bolt_cycle" {
+	"g452_cycle.smd"
 	activity "ACT_SHOTGUN_PUMP" 1
-	{ event AE_WPN_PRIMARYATTACK 0 "0.5" }
-	{ event 6001 5 "2" }
+	{ event 6001 59 "1" }
+	// { event AE_CL_PLAYSOUND 17 "Weapon_Rifle_ZM.Special1" }
 	fadein 0.1
 	fadeout 0.1
-	fps 50
+	fps 60
 }
-
-$sequence "pumpalt1" {
-	"pumpalt1.smd"
+$sequence "bolt_cycle2" {
+	"g452_cycle2.smd"
 	activity "ACT_SHOTGUN_PUMP" 1
-	{ event AE_WPN_PRIMARYATTACK 0 "0.5" }
-	{ event 6001 5 "2" }
+	{ event 6001 59 "1" }
+	// { event AE_CL_PLAYSOUND 17 "Weapon_Rifle_ZM.Special1" }
 	fadein 0.1
 	fadeout 0.1
-	fps 50
+	fps 60
 }
 
-$sequence "pumpalt2" {
-	"pumpalt2.smd"
-	activity "ACT_SHOTGUN_PUMP" 1
-	{ event AE_WPN_PRIMARYATTACK 0 "0.5" }
-	{ event 6001 5 "2" }
-	fadein 0.1
-	fadeout 0.1
-	fps 50
+$sequence "dryfire" {
+	"g452_idle.smd"
+	activity "ACT_VM_DRYFIRE" -1
+	snap
+	fps 9999
 }
